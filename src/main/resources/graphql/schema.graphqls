@@ -1,0 +1,14 @@
+type Producer {
+    producerContractAddress: ID!,
+}
+
+type Query {
+    getAllProducers(count: Int): [Producer]!
+    getProducerByContractAddress(producerAccountContractAddress: ID): Producer
+}
+
+type Mutation {
+    registerProducer(
+        producerContractAddress: String!
+    ):Producer
+}
