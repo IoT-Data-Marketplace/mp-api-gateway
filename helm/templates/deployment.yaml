@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mp-api-gateway.fullname" . }}
+  labels:
+    {{- include "mp-api-gateway.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "mp-api-gateway.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mp-api-gateway.selectorLabels" . | nindent 8 }}
+      annotations:
+        forceRecreate: {{ add .Values.global.recreationFlag .Values.recreationFlag | quote}}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: {{ required "A valid .Values.global.mpApiGatewayPortName entry required!" .Values.global.mpApiGatewayPortName }}
+              containerPort: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort }}
+
+          envFrom:
+            - configMapRef:
+                name: {{ template "mp-api-gateway.fullname" . }}
+
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

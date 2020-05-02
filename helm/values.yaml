@@ -1,0 +1,61 @@
+# Default values for mp-api-gateway.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: 543164192837.dkr.ecr.eu-central-1.amazonaws.com/mp-api-gateway
+  pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+#####################################################################################
+################## USER SUPPLIED VALUES IN MAIN VALUES.YAML #########################
+#####################################################################################
+
+recreationFlag: 1
+
+global:
+  recreationFlag: 1
+  mpApiGatewayPort: 8060
+  mpApiGatewayPortName: api-gtw-8060
+
+service:
+  type: NodePort
+  nodePort: ""
+
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetAverageCPUUtilization: 70
+  targetAverageMemoryUtilization: 70
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+
+livenessProbe:
+  path: /actuator/health
+  initialDelaySeconds: 10
+  failureThreshold: 30
+readinessProbe:
+  path: /actuator/health
+  initialDelaySeconds: 10
+  failureThreshold: 30
+
+#####################################################################################
+################## USER SUPPLIED VALUES IN MAIN VALUES.YAML #########################
+#####################################################################################
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
