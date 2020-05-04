@@ -1,0 +1,6 @@
+server:
+  port: ${MP.API.GATEWAY.PORT}
+
+services:
+  kafkaRestProxy:
+    url: ${MP.KAFKA.REST.PROXY.URL}

@@ -1,14 +1,32 @@
-type Producer {
-    producerContractAddress: ID!,
+enum SensorType {
+    TEMPERATURE,
+    HUMIDITY,
+    AIR_POLLUTION,
+}
+
+input GeolocationInput {
+    latitude: String!
+    longitude: String!
+}
+
+input IoTSensorInput {
+    sensorContractAddress: String!
+    dataStreamEntityContractAddress: String!
+    sensorType: SensorType!
+    geolocation: GeolocationInput!
+}
+
+type IoTSensor {
+    sensorContractAddress: ID!,
 }
 
 type Query {
-    getAllProducers(count: Int): [Producer]!
-    getProducerByContractAddress(producerAccountContractAddress: ID): Producer
+    getAllIoTSensors(count: Int): [IoTSensor]!
+    getIoTSensorByContractAddress(IoTSensorAccountContractAddress: ID): IoTSensor
 }
 
 type Mutation {
-    registerProducer(
-        producerContractAddress: String!
-    ):Producer
+    registerIoTSensor(
+        sensor: IoTSensorInput!
+    ):IoTSensor
 }
