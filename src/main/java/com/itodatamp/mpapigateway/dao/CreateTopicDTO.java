@@ -1,4 +1,4 @@
-package com.itodatamp.mpapigateway.dto;
+package com.itodatamp.mpapigateway.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

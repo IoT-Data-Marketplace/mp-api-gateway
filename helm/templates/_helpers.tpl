@@ -61,3 +61,8 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+
+{{- define "mpKafkaRestProxyUrl" }}
+{{- printf "http://%s-mp-kafka-rest-proxy:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpApiGatewayPort | toString) | quote}}
+{{- end }}

@@ -2,7 +2,8 @@ package com.itodatamp.mpapigateway.service.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itodatamp.mpapigateway.config.PropertiesBean;
-import com.itodatamp.mpapigateway.dto.CreateTopicDTO;
+import com.itodatamp.mpapigateway.dao.CreateTopicDTO;
+import com.itodatamp.mpapigateway.dao.HttpResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
@@ -18,7 +19,7 @@ public class TopicService {
     private final PropertiesBean properties;
 
     @SneakyThrows
-    public HttpStatus createTopic(String topicName) {
+    public HttpResponseDTO createTopic(String topicName) {
         OkHttpClient client = new OkHttpClient();
         CreateTopicDTO createTopicDTO = CreateTopicDTO.builder().topicName(topicName).build();
         ObjectMapper mapper = new ObjectMapper();
@@ -30,7 +31,11 @@ public class TopicService {
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
+        log.info("Creating a topic with name: " + createTopicDTO.getTopicName());
         Response response = client.newCall(request).execute();
-        return HttpStatus.resolve(response.code());
+        HttpResponseDTO httpResponseDTO = HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
+        log.info("Response Code: " + httpResponseDTO.getStatusCode());
+        log.info("Response Body: " + httpResponseDTO.getResponseBody());
+        return httpResponseDTO;
     }
 }

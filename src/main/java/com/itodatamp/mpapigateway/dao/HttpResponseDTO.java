@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IoTSensor {
-    private String sensorContractAddress;
-    private String dataStreamEntityContractAddress;
-    private SensorType sensorType;
-    private Geolocation geolocation;
+public class HttpResponseDTO {
+    private int statusCode;
+    private String responseBody;
 }

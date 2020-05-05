@@ -5,4 +5,5 @@ metadata:
   labels:
     {{ include "mp-api-gateway.labels" . | nindent 4 }}
 data:
-  SERVER_PORT: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort | quote }}
+  MP_API_GATEWAY_PORT: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort | quote }}
+  MP_KAFKA_REST_PROXY_URL: {{ include "mpKafkaRestProxyUrl" . }}

@@ -18,9 +18,11 @@ fullnameOverride: ""
 recreationFlag: 1
 
 global:
+  namespaceName: ""
   recreationFlag: 1
-  mpApiGatewayPort: 8060
-  mpApiGatewayPortName: api-gtw-8060
+  mpApiGatewayPort: 8050
+  mpApiGatewayPortName: api-gtw-8050
+  mpKafkaRestProxyPort: 8060
 
 service:
   type: NodePort

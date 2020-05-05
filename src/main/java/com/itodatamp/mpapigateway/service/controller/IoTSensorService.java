@@ -1,7 +1,9 @@
 package com.itodatamp.mpapigateway.service.controller;
 
+import com.itodatamp.mpapigateway.dao.HttpResponseDTO;
 import com.itodatamp.mpapigateway.dao.IoTSensor;
 import com.itodatamp.mpapigateway.service.kafka.TopicService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,10 +26,7 @@ public class IoTSensorService {
         return Optional.ofNullable(IoTSensor.builder().sensorContractAddress(sensorContractAddress).build());
     }
 
-    public IoTSensor registerIoTSensor( final IoTSensor sensor) {
-
-        topicService.createTopic(sensor.getSensorContractAddress());
-
-        return IoTSensor.builder().sensorContractAddress(sensor.getSensorContractAddress()).build();
+    public HttpResponseDTO registerIoTSensor(final String sensorContractAddress) {
+        return topicService.createTopic(sensorContractAddress);
     }
 }

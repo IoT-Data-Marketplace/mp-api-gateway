@@ -9,6 +9,11 @@ input GeolocationInput {
     longitude: String!
 }
 
+type HttpResponseDTO {
+    statusCode: Int!
+    responseBody: String!
+}
+
 input IoTSensorInput {
     sensorContractAddress: String!
     dataStreamEntityContractAddress: String!
@@ -27,6 +32,6 @@ type Query {
 
 type Mutation {
     registerIoTSensor(
-        sensor: IoTSensorInput!
-    ):IoTSensor
+        sensorContractAddress: String!
+    ):HttpResponseDTO
 }

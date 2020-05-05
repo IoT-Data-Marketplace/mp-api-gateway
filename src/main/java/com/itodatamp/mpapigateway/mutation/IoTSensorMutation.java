@@ -2,6 +2,7 @@ package com.itodatamp.mpapigateway.mutation;
 
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import com.itodatamp.mpapigateway.dao.HttpResponseDTO;
 import com.itodatamp.mpapigateway.dao.IoTSensor;
 import com.itodatamp.mpapigateway.service.controller.IoTSensorService;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,7 @@ public class IoTSensorMutation implements GraphQLMutationResolver {
         this.ioTSensorService = ioTSensorService;
     }
 
-    public IoTSensor registerIoTSensor(@NotNull final IoTSensor sensor) {
-        return this.ioTSensorService.registerIoTSensor(sensor);
+    public HttpResponseDTO registerIoTSensor(@NotNull final String sensorContractAddress) {
+        return this.ioTSensorService.registerIoTSensor(sensorContractAddress);
     }
 }

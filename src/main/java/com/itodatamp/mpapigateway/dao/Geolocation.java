@@ -1,4 +1,4 @@
-package com.itodatamp.mpapigateway.graphql.input;
+package com.itodatamp.mpapigateway.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
