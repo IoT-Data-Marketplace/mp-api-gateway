@@ -1,4 +1,4 @@
-package com.itodatamp.mpapigateway.dao;
+package com.itodatamp.mpapigateway.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IoTSensor {
+public class SensorDTO {
     private String sensorContractAddress;
     private String dataStreamEntityContractAddress;
     private SensorType sensorType;
     private Geolocation geolocation;
+    private SensorStatus sensorStatus;
 }

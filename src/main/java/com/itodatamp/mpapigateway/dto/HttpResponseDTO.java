@@ -1,4 +1,4 @@
-package com.itodatamp.mpapigateway.dao;
+package com.itodatamp.mpapigateway.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Geolocation {
-    private String latitude;
-    private String longitude;
+public class HttpResponseDTO {
+    private int statusCode;
+    private String responseBody;
 }

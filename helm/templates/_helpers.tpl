@@ -64,5 +64,5 @@ Create the name of the service account to use
 
 
 {{- define "mpKafkaRestProxyUrl" }}
-{{- printf "http://%s-mp-kafka-rest-proxy:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpApiGatewayPort | toString) | quote}}
+{{- printf "http://%s-mp-kafka-rest-proxy:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpKafkaRestProxyPort | toString) | quote}}
 {{- end }}

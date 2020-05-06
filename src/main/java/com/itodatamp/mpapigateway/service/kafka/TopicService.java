@@ -2,13 +2,12 @@ package com.itodatamp.mpapigateway.service.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itodatamp.mpapigateway.config.PropertiesBean;
-import com.itodatamp.mpapigateway.dao.CreateTopicDTO;
-import com.itodatamp.mpapigateway.dao.HttpResponseDTO;
+import com.itodatamp.mpapigateway.dto.CreateTopicDTO;
+import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import okhttp3.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service

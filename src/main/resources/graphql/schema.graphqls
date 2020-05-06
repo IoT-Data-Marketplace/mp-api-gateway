@@ -14,24 +14,24 @@ type HttpResponseDTO {
     responseBody: String!
 }
 
-input IoTSensorInput {
+input SensorInput {
     sensorContractAddress: String!
     dataStreamEntityContractAddress: String!
     sensorType: SensorType!
     geolocation: GeolocationInput!
 }
 
-type IoTSensor {
+type Sensor {
     sensorContractAddress: ID!,
 }
 
 type Query {
-    getAllIoTSensors(count: Int): [IoTSensor]!
-    getIoTSensorByContractAddress(IoTSensorAccountContractAddress: ID): IoTSensor
+    getAllSensors(count: Int): [Sensor]!
+    getSensorByContractAddress(sensorAccountContractAddress: ID): Sensor
 }
 
 type Mutation {
-    registerIoTSensor(
+    registerSensor(
         sensorContractAddress: String!
     ):HttpResponseDTO
 }
