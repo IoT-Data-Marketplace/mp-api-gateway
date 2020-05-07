@@ -4,3 +4,7 @@ server:
 services:
   kafkaRestProxy:
     url: ${MP.KAFKA.REST.PROXY.URL}
+  bcClient:
+    url: ${MP.BC.CLIENT.URL}
+  entityManager:
+    url: ${MP.ENTITY.MANAGER.URL}

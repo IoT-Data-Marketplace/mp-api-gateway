@@ -2,7 +2,7 @@ package com.itodatamp.mpapigateway.query;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.itodatamp.mpapigateway.dto.SensorDTO;
-import com.itodatamp.mpapigateway.service.controller.SensorService;
+import com.itodatamp.mpapigateway.service.mutation.SensorService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

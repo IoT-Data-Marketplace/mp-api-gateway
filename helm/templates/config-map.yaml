@@ -7,3 +7,5 @@ metadata:
 data:
   MP_API_GATEWAY_PORT: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort | quote }}
   MP_KAFKA_REST_PROXY_URL: {{ include "mpKafkaRestProxyUrl" . }}
+  MP_BC_CLIENT_URL: {{ include "bcClientURL" . }}
+  MP_ENTITY_MANAGER_URL: {{ include "entityManagerURL" . }}

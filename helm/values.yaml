@@ -19,6 +19,8 @@ global:
   mpApiGatewayPort: 8050
   mpApiGatewayPortName: api-gtw-8050
   mpKafkaRestProxyPort: 8060
+  mpBCClientPort: 8070
+  mpEntityManagerPort: 8090
 
 service:
   type: NodePort

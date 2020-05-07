@@ -1,40 +1,44 @@
-package com.itodatamp.mpapigateway.service.kafka;
+package com.itodatamp.mpapigateway.service.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itodatamp.mpapigateway.config.PropertiesBean;
-import com.itodatamp.mpapigateway.dto.CreateTopicDTO;
 import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
+import com.itodatamp.mpapigateway.dto.SensorDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.stereotype.Service;
 
+import java.net.URL;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Log
-public class TopicService {
+public class SensorEntityService {
 
     private final PropertiesBean properties;
 
+    ObjectMapper mapper = new ObjectMapper();
+
     @SneakyThrows
-    public HttpResponseDTO createTopic(String topicName) {
+    public HttpResponseDTO saveSensor(SensorDTO sensorDTO) {
+
         OkHttpClient client = new OkHttpClient();
-        CreateTopicDTO createTopicDTO = CreateTopicDTO.builder().topicName(topicName).build();
-        ObjectMapper mapper = new ObjectMapper();
+        URL url = new URL(properties.getEntityManagerURL().concat("/sensors"));
 
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mapper.writeValueAsString(createTopicDTO), mediaType);
+        RequestBody body = RequestBody.create(mediaType, mapper.writeValueAsString(sensorDTO));
         Request request = new Request.Builder()
-                .url(properties.getKafkaRestProxyURL().concat("/topics"))
+                .url(url)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
-        log.info("Creating a topic with name: " + createTopicDTO.getTopicName());
+        log.info("Submitting POST request, URL: ".concat(url.toString()).concat("\nBody: ").concat(mapper.writeValueAsString(sensorDTO)));
+
         Response response = client.newCall(request).execute();
+
         HttpResponseDTO httpResponseDTO = HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
-        log.info("Response Code: " + httpResponseDTO.getStatusCode());
-        log.info("Response Body: " + httpResponseDTO.getResponseBody());
         return httpResponseDTO;
     }
 }

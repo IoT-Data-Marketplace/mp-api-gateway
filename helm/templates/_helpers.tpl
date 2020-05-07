@@ -51,18 +51,15 @@ app.kubernetes.io/name: {{ include "mp-api-gateway.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "mp-api-gateway.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "mp-api-gateway.fullname" .) .Values.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
-
 
 {{- define "mpKafkaRestProxyUrl" }}
 {{- printf "http://%s-mp-kafka-rest-proxy:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpKafkaRestProxyPort | toString) | quote}}
+{{- end }}
+
+{{- define "bcClientURL" }}
+{{- printf "http://%s-mp-bc-client:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpBCClientPort | toString) | quote}}
+{{- end }}
+
+{{- define "entityManagerURL" }}
+{{- printf "http://%s-mp-entity-manager:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpEntityManagerPort | toString) | quote}}
 {{- end }}

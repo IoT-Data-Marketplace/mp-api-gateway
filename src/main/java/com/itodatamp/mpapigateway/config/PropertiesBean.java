@@ -11,4 +11,10 @@ public class PropertiesBean {
     @Value("${services.kafkaRestProxy.url}")
     private String kafkaRestProxyURL;
 
+    @Value("${services.bcClient.url}")
+    private String bcClientURL;
+
+    @Value("${services.entityManager.url}")
+    private String entityManagerURL;
+
 }

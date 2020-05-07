@@ -13,6 +13,7 @@ public class SensorDTO {
     private String sensorContractAddress;
     private String dataStreamEntityContractAddress;
     private SensorType sensorType;
-    private Geolocation geolocation;
+    private Double latitude;
+    private Double longitude;
     private SensorStatus sensorStatus;
 }
