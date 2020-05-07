@@ -1,8 +1,9 @@
-package com.itodatamp.mpapigateway.service.mutation;
+package com.itodatamp.mpapigateway.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
 import com.itodatamp.mpapigateway.dto.SensorDTO;
+import com.itodatamp.mpapigateway.dto.SensorStatus;
 import com.itodatamp.mpapigateway.service.bc.BCSensorService;
 import com.itodatamp.mpapigateway.service.entity.SensorEntityService;
 import com.itodatamp.mpapigateway.service.kafka.TopicService;
@@ -37,13 +38,18 @@ public class SensorService {
 //        first we check if the contract really exists on the blockchain, if not we throw an exception
          HttpResponseDTO bcHttpResponseDTO = bcSensorService.fetchSensorForContractAddress(sensorContractAddress);
          if (HttpStatus.valueOf(bcHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(bcHttpResponseDTO.getResponseBody());
+        SensorDTO sensorDTO = new ObjectMapper().readValue(bcHttpResponseDTO.getResponseBody(), SensorDTO.class);
 
 //         if the contract is ok, we create a topic on kafka cluster so the sensor can start pushing the data
         HttpResponseDTO topicHttpResponseDTO = topicService.createTopic(sensorContractAddress);
         if (HttpStatus.valueOf(topicHttpResponseDTO.getStatusCode()) != HttpStatus.CREATED) throw new Exception(topicHttpResponseDTO.getResponseBody());
 
+        //        then set status to ACTIVE for the sensor
+        sensorDTO.setSensorStatus(SensorStatus.ACTIVE);
+        HttpResponseDTO bcSensorStatusResponseDTO = bcSensorService.setSensorStatus(sensorDTO);
+        if (HttpStatus.valueOf(bcSensorStatusResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(bcSensorStatusResponseDTO.getResponseBody());
+
 //         finally we store the sensor data in our database to improve the search speed
-        SensorDTO sensorDTO = new ObjectMapper().readValue(bcHttpResponseDTO.getResponseBody(), SensorDTO.class);
         HttpResponseDTO sensorEntityHttpResponseDTO = sensorEntityService.saveSensor(sensorDTO);
         if (HttpStatus.valueOf(sensorEntityHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(sensorEntityHttpResponseDTO.getResponseBody());
 

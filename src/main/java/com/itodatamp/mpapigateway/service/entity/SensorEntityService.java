@@ -19,12 +19,12 @@ public class SensorEntityService {
 
     private final PropertiesBean properties;
 
+    OkHttpClient client = new OkHttpClient();
     ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
     public HttpResponseDTO saveSensor(SensorDTO sensorDTO) {
 
-        OkHttpClient client = new OkHttpClient();
         URL url = new URL(properties.getEntityManagerURL().concat("/sensors"));
 
         MediaType mediaType = MediaType.parse("application/json");

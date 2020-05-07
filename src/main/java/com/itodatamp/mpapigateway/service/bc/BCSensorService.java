@@ -1,30 +1,31 @@
 package com.itodatamp.mpapigateway.service.bc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itodatamp.mpapigateway.config.PropertiesBean;
 import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
+import com.itodatamp.mpapigateway.dto.SensorDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BCSensorService {
 
-    OkHttpClient client = new OkHttpClient();
     private final PropertiesBean properties;
+
+    ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
     public HttpResponseDTO fetchSensorForContractAddress(final String sensorContractAddress) {
-
+        OkHttpClient client = new OkHttpClient();
         URL url = new URL(properties.getBcClientURL()
                 .concat("/sensors")
                 .concat("?sensorContractAddress=")
@@ -48,4 +49,31 @@ public class BCSensorService {
         return httpResponseDTO;
     }
 
+    @SneakyThrows
+    public HttpResponseDTO setSensorStatus(SensorDTO sensorDTO) {
+        URL url = new URL(properties.getBcClientURL()
+                .concat("/sensors")
+                .concat("/status"));
+
+        // set higher timeout in order to wait long enough for the smart contract transaction to complete
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .callTimeout(Duration.ofSeconds(60))
+                .readTimeout(Duration.ofSeconds(60))
+                .connectTimeout(Duration.ofSeconds(60))
+                .build();
+
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, mapper.writeValueAsString(sensorDTO));
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        log.info("Submitting POST request, URL: ".concat(url.toString()).concat("\nBody: ").concat(mapper.writeValueAsString(sensorDTO)));
+
+        Response response = client.newCall(request).execute();
+
+        return HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
+    }
 }
