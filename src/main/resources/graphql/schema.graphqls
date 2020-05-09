@@ -30,8 +30,22 @@ type Query {
     getSensorByContractAddress(sensorAccountContractAddress: ID): Sensor
 }
 
+
+input Record {
+    key: String!
+    value: String!
+}
+
+input NewMessagesDTO {
+    records: [Record]
+}
+
 type Mutation {
     registerSensor(
         sensorContractAddress: String!
+    ):HttpResponseDTO
+    sendMessages(
+        sensorContractAddress: String!
+        newMessagesDTO: NewMessagesDTO
     ):HttpResponseDTO
 }
