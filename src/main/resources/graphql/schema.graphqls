@@ -25,9 +25,15 @@ type Sensor {
     sensorContractAddress: ID!,
 }
 
+type SensorSummaryDTO {
+    sensorContractAddress: String!,
+    streamSize: Int!
+}
+
 type Query {
     getAllSensors(count: Int): [Sensor]!
     getSensorByContractAddress(sensorAccountContractAddress: ID): Sensor
+    getSensorSummary(sensorContractAddress: String!): SensorSummaryDTO
 }
 
 

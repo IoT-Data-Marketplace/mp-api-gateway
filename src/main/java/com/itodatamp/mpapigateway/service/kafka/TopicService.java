@@ -37,4 +37,19 @@ public class TopicService {
         log.info("Response Body: " + httpResponseDTO.getResponseBody());
         return httpResponseDTO;
     }
+
+    @SneakyThrows
+    public HttpResponseDTO getTopicSummary(String topicName) {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        Request request = new Request.Builder()
+                .url(properties.getKafkaRestProxyURL().concat("/topics/").concat(topicName))
+                .method("GET", null)
+                .build();
+        Response response = client.newCall(request).execute();
+        HttpResponseDTO httpResponseDTO = HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
+        log.info("Response Code: " + httpResponseDTO.getStatusCode());
+        log.info("Response Body: " + httpResponseDTO.getResponseBody());
+        return httpResponseDTO;
+    }
 }

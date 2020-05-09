@@ -1,7 +1,9 @@
 package com.itodatamp.mpapigateway.query;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
 import com.itodatamp.mpapigateway.dto.SensorDTO;
+import com.itodatamp.mpapigateway.dto.SensorSummaryDTO;
 import com.itodatamp.mpapigateway.service.SensorService;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,10 @@ public class SensorQuery implements GraphQLQueryResolver {
 
     public Optional<SensorDTO> getSensorByContractAddress(final String sensorContractAddress) {
         return this.sensorService.getSensorByContractAddress(sensorContractAddress);
+    }
+
+    public SensorSummaryDTO getSensorSummary(final String sensorContractAddress) {
+        return this.sensorService.getSensorSummary(sensorContractAddress);
     }
 
 }
