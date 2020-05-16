@@ -63,7 +63,7 @@ public class SensorService {
 
 //         if the contract is ok, we create a topic on kafka cluster so the sensor can start pushing the data
         HttpResponseDTO topicHttpResponseDTO = topicService.getTopicSummary(sensorContractAddress);
-        if (HttpStatus.valueOf(topicHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(topicHttpResponseDTO.getResponseBody());
+//        if (HttpStatus.valueOf(topicHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(topicHttpResponseDTO.getResponseBody());
 
         JSONObject jsonObject = new JSONObject(topicHttpResponseDTO.getResponseBody());
 

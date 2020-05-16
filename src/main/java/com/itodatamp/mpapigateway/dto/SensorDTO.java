@@ -16,4 +16,5 @@ public class SensorDTO {
     private Double latitude;
     private Double longitude;
     private SensorStatus sensorStatus;
+    private int pricePerDataUnit;
 }
