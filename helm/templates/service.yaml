@@ -11,6 +11,5 @@ spec:
       targetPort: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort }}
       protocol: TCP
       name: {{ required "A valid .Values.global.mpApiGatewayPortName entry required!" .Values.global.mpApiGatewayPortName }}
-      nodePort: {{ required "A valid .Values.service.nodePort entry required!" .Values.service.nodePort }}
   selector:
     {{- include "mp-api-gateway.selectorLabels" . | nindent 4 }}
