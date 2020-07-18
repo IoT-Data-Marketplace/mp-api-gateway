@@ -9,3 +9,4 @@ data:
   MP_KAFKA_REST_PROXY_URL: {{ include "mpKafkaRestProxyUrl" . }}
   MP_BC_CLIENT_URL: {{ include "bcClientURL" . }}
   MP_ENTITY_MANAGER_URL: {{ include "entityManagerURL" . }}
+  MP_SIGNATURE_VERIFIER_URL: {{ include "signatureVerifierURL" . }}

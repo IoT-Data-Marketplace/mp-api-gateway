@@ -8,3 +8,5 @@ services:
     url: ${MP.BC.CLIENT.URL}
   entityManager:
     url: ${MP.ENTITY.MANAGER.URL}
+  signatureVerifier:
+    url: ${MP.SIGNATURE.VERIFIER.URL}

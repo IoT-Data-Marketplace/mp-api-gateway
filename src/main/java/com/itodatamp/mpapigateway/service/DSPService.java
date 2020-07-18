@@ -72,7 +72,7 @@ public class DSPService {
 
         RequestBody body = RequestBody.create(mediaType, jsonObject.toString());
         Request request = new Request.Builder()
-                .url("http://localhost:8030/api/verify")
+                .url(properties.getSignatureVerifierURL().concat("/api/verify"))
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
                 .build();

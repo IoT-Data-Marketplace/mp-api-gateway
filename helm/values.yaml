@@ -21,6 +21,7 @@ global:
   mpKafkaRestProxyPort: 8060
   mpBCClientPort: 8070
   mpEntityManagerPort: 8090
+  mpSignatureVerifierPort: 8030
 
 service:
   type: ClusterIP

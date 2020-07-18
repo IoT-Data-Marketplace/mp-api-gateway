@@ -17,4 +17,7 @@ public class PropertiesBean {
     @Value("${services.entityManager.url}")
     private String entityManagerURL;
 
+    @Value("${services.signatureVerifier.url}")
+    private String signatureVerifierURL;
+
 }

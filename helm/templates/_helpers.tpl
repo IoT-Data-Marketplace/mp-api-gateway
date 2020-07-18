@@ -63,3 +63,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "entityManagerURL" }}
 {{- printf "http://%s-mp-entity-manager:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpEntityManagerPort | toString) | quote}}
 {{- end }}
+
+{{- define "signatureVerifierURL" }}
+{{- printf "http://%s-mp-signature-verifier:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpSignatureVerifierPort | toString) | quote}}
+{{- end }}
