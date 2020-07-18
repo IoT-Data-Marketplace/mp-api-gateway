@@ -24,7 +24,7 @@ public class MessageService {
     ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
-    public HttpResponseDTO sendMessages(String sensorContractAddress, NewMessagesDTO messagesDTO) {
+    public HttpResponseDTO sendMessages(String sensorContractAddress, NewMessagesDTO messagesDTO, Headers tracingHeaders) {
 
         OkHttpClient client = new OkHttpClient();
 
@@ -33,6 +33,7 @@ public class MessageService {
         Request request = new Request.Builder()
                 .url(properties.getKafkaRestProxyURL().concat("/messages/").concat(sensorContractAddress))
                 .post(body)
+                .headers(tracingHeaders)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
                 .build();
@@ -45,12 +46,13 @@ public class MessageService {
     }
 
     @SneakyThrows
-    public ResponseMessagesDTO getMessagesForSensor(String sensorContractAddress, Integer offset, Integer count) {
+    public ResponseMessagesDTO getMessagesForSensor(String sensorContractAddress, Integer offset, Integer count, Headers tracingHeaders) {
         ResponseMessagesDTO responseMessagesDTO = ResponseMessagesDTO.builder().records(new LinkedList<>()).build();
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
+                .headers(tracingHeaders)
                 .url(properties.getKafkaRestProxyURL().concat("/messages/").concat(sensorContractAddress).concat("?offset=").concat(String.valueOf(offset).concat("&count=").concat(String.valueOf(count))))
                 .method("GET", null)
                 .build();

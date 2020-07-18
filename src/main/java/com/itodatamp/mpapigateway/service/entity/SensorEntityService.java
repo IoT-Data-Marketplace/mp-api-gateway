@@ -23,7 +23,7 @@ public class SensorEntityService {
     ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
-    public HttpResponseDTO saveSensor(SensorDTO sensorDTO) {
+    public HttpResponseDTO saveSensor(SensorDTO sensorDTO, Headers tracingHeaders) {
 
         URL url = new URL(properties.getEntityManagerURL().concat("/sensors"));
 
@@ -32,6 +32,7 @@ public class SensorEntityService {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
+                .headers(tracingHeaders)
                 .addHeader("Content-Type", "application/json")
                 .build();
         log.info("Submitting POST request, URL: ".concat(url.toString()).concat("\nBody: ").concat(mapper.writeValueAsString(sensorDTO)));

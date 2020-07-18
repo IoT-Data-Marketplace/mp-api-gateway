@@ -18,7 +18,7 @@ public class TopicService {
     private final PropertiesBean properties;
 
     @SneakyThrows
-    public HttpResponseDTO createTopic(String topicName) {
+    public HttpResponseDTO createTopic(String topicName, Headers tracingHeaders) {
         OkHttpClient client = new OkHttpClient();
         CreateTopicDTO createTopicDTO = CreateTopicDTO.builder().topicName(topicName).build();
         ObjectMapper mapper = new ObjectMapper();
@@ -28,6 +28,7 @@ public class TopicService {
         Request request = new Request.Builder()
                 .url(properties.getKafkaRestProxyURL().concat("/topics"))
                 .post(body)
+                .headers(tracingHeaders)
                 .addHeader("Content-Type", "application/json")
                 .build();
         log.info("Creating a topic with name: " + createTopicDTO.getTopicName());
@@ -39,11 +40,12 @@ public class TopicService {
     }
 
     @SneakyThrows
-    public HttpResponseDTO getTopicSummary(String topicName) {
+    public HttpResponseDTO getTopicSummary(String topicName, Headers tracingHeaders) {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
                 .url(properties.getKafkaRestProxyURL().concat("/topics/").concat(topicName))
+                .headers(tracingHeaders)
                 .method("GET", null)
                 .build();
         Response response = client.newCall(request).execute();

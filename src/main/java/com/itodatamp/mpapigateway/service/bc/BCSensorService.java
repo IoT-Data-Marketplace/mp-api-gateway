@@ -24,7 +24,7 @@ public class BCSensorService {
     ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
-    public HttpResponseDTO fetchSensorForContractAddress(final String sensorContractAddress) {
+    public HttpResponseDTO fetchSensorForContractAddress(final String sensorContractAddress, Headers tracingHeaders) {
         OkHttpClient client = new OkHttpClient();
         URL url = new URL(properties.getBcClientURL()
                 .concat("/sensors")
@@ -32,6 +32,7 @@ public class BCSensorService {
                 .concat(sensorContractAddress));
 
         Request request = new Request.Builder()
+                .headers(tracingHeaders)
                 .url(url)
                 .get()
                 .build();
@@ -50,7 +51,7 @@ public class BCSensorService {
     }
 
     @SneakyThrows
-    public HttpResponseDTO setSensorStatus(SensorDTO sensorDTO) {
+    public HttpResponseDTO setSensorStatus(SensorDTO sensorDTO, Headers tracingHeaders) {
         URL url = new URL(properties.getBcClientURL()
                 .concat("/sensors")
                 .concat("/status"));
@@ -67,6 +68,7 @@ public class BCSensorService {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
+                .headers(tracingHeaders)
                 .addHeader("Content-Type", "application/json")
                 .build();
 

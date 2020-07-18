@@ -1,10 +1,11 @@
 package com.itodatamp.mpapigateway.query;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
+import com.itodatamp.mpapigateway.config.TracingHeaderInterceptorHelper;
 import com.itodatamp.mpapigateway.dto.SensorDTO;
 import com.itodatamp.mpapigateway.dto.SensorSummaryDTO;
 import com.itodatamp.mpapigateway.service.SensorService;
+import graphql.schema.DataFetchingEnvironment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,22 +15,24 @@ import java.util.Optional;
 public class SensorQuery implements GraphQLQueryResolver {
 
     private final SensorService sensorService;
+    private final TracingHeaderInterceptorHelper tracingHeaderInterceptorHelper;
 
-    public SensorQuery(SensorService sensorService) {
+    public SensorQuery(SensorService sensorService, TracingHeaderInterceptorHelper tracingHeaderInterceptorHelper) {
         this.sensorService = sensorService;
+        this.tracingHeaderInterceptorHelper = tracingHeaderInterceptorHelper;
     }
 
 
-    public List<SensorDTO> getAllSensors(final int count) {
-        return this.sensorService.getAllSensors(count);
+    public List<SensorDTO> getAllSensors(final int count, DataFetchingEnvironment env) {
+        return this.sensorService.getAllSensors(count, tracingHeaderInterceptorHelper.getTracingHeaders(env));
     }
 
-    public Optional<SensorDTO> getSensorByContractAddress(final String sensorContractAddress) {
-        return this.sensorService.getSensorByContractAddress(sensorContractAddress);
+    public Optional<SensorDTO> getSensorByContractAddress(final String sensorContractAddress, DataFetchingEnvironment env) {
+        return this.sensorService.getSensorByContractAddress(sensorContractAddress, tracingHeaderInterceptorHelper.getTracingHeaders(env));
     }
 
-    public SensorSummaryDTO getSensorSummary(final String sensorContractAddress) {
-        return this.sensorService.getSensorSummary(sensorContractAddress);
+    public SensorSummaryDTO getSensorSummary(final String sensorContractAddress, DataFetchingEnvironment env) {
+        return this.sensorService.getSensorSummary(sensorContractAddress, tracingHeaderInterceptorHelper.getTracingHeaders(env));
     }
 
 }
