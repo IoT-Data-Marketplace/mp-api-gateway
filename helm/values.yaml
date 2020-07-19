@@ -17,6 +17,7 @@ global:
   namespaceName: ""
   recreationFlag: 1
   mpApiGatewayPort: 8050
+  mpApiGatewayNodePort: 30444
   mpApiGatewayPortName: http-8050
   mpKafkaRestProxyPort: 8060
   mpBCClientPort: 8070
@@ -24,7 +25,7 @@ global:
   mpSignatureVerifierPort: 8030
 
 service:
-  type: ClusterIP
+  type: NodePort
 
 hpa:
   enabled: true
