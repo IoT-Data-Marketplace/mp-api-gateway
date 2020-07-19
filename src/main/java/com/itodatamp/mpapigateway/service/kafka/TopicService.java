@@ -6,13 +6,14 @@ import com.itodatamp.mpapigateway.dto.CreateTopicDTO;
 import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Log
+@Slf4j
 public class TopicService {
 
     private final PropertiesBean properties;
@@ -34,8 +35,8 @@ public class TopicService {
         log.info("Creating a topic with name: " + createTopicDTO.getTopicName());
         Response response = client.newCall(request).execute();
         HttpResponseDTO httpResponseDTO = HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
-        log.info("Response Code: " + httpResponseDTO.getStatusCode());
-        log.info("Response Body: " + httpResponseDTO.getResponseBody());
+        log.debug("Response Code: " + HttpStatus.valueOf(httpResponseDTO.getStatusCode()));
+        log.debug("Response Body: " + httpResponseDTO.getResponseBody());
         return httpResponseDTO;
     }
 
@@ -50,8 +51,8 @@ public class TopicService {
                 .build();
         Response response = client.newCall(request).execute();
         HttpResponseDTO httpResponseDTO = HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
-        log.info("Response Code: " + httpResponseDTO.getStatusCode());
-        log.info("Response Body: " + httpResponseDTO.getResponseBody());
+        log.debug("Response Code: " + HttpStatus.valueOf(httpResponseDTO.getStatusCode()));
+        log.debug("Response Body: " + httpResponseDTO.getResponseBody());
         return httpResponseDTO;
     }
 }

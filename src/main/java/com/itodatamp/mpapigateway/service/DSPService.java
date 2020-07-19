@@ -1,8 +1,8 @@
 package com.itodatamp.mpapigateway.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itodatamp.mpapigateway.config.PropertiesBean;
 import com.itodatamp.mpapigateway.dto.AuthDTO;
+import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
 import com.itodatamp.mpapigateway.security.JWTTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,7 +25,7 @@ public class DSPService {
 
     private final PropertiesBean properties;
     private final JWTTokenService jwtTokenService;
-    ObjectMapper mapper = new ObjectMapper();
+    private final AuthEntityManagerService authEntityManagerService;
 
     @SneakyThrows
     public ResponseEntity<String> getChallenge(String dspAccountAddress, String dspContractAddress) {
@@ -56,28 +56,15 @@ public class DSPService {
 
         UUID nonce = UUID.randomUUID();
 
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody nonceBody = RequestBody.create(mediaType, mapper.writeValueAsString(
-                AuthDTO.builder()
-                        .contractAddress(dspContractAddress)
-                        .nonce(nonce.toString())
-                        .build()
-        ));
+        HttpResponseDTO httpResponseDTO = authEntityManagerService.saveAuthDTO(AuthDTO.builder()
+                .contractAddress(dspContractAddress)
+                .nonce(nonce.toString())
+                .build());
 
-
-        /* saving the nonce on the entity manager */
-        Request nonceRequest = new Request.Builder()
-//                .headers(tracingHeaders)
-                .url(properties.getEntityManagerURL().concat("/auth"))
-                .post(nonceBody)
-                .addHeader("Content-Type", "application/json")
-                .build();
-        Response res = client.newCall(nonceRequest).execute();
-
-        if (HttpStatus.valueOf(res.code()) == HttpStatus.OK)
+        if (HttpStatus.valueOf(httpResponseDTO.getStatusCode()) == HttpStatus.OK)
             return ResponseEntity.ok(nonce.toString());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.valueOf(httpResponseDTO.getStatusCode())).build();
     }
 
     @SneakyThrows
@@ -121,19 +108,11 @@ public class DSPService {
                     .jwt(jwtToken)
                     .build();
 
-            URL url = new URL(properties.getEntityManagerURL().concat("/auth"));
-            RequestBody dspBody = RequestBody.create(mediaType, mapper.writeValueAsString(authDTO));
-            Request dspRequest = new Request.Builder()
-                    .url(url)
-                    .post(dspBody)
-                    .addHeader("Content-Type", "application/json")
-                    .build();
-            Response res = client.newCall(dspRequest).execute();
+            HttpResponseDTO httpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO);
 
-            if (HttpStatus.valueOf(res.code()) == HttpStatus.OK)
+            if (HttpStatus.valueOf(httpResponseDTO.getStatusCode()) == HttpStatus.OK)
                 return ResponseEntity.ok(jwtToken);
         }
-
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }

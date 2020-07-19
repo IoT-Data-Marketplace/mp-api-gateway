@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -46,7 +47,8 @@ public class BCSensorService {
         }
 
         HttpResponseDTO httpResponseDTO = HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
-
+        log.debug("Response Code: " + HttpStatus.valueOf(httpResponseDTO.getStatusCode()));
+        log.debug("Response Body: " + httpResponseDTO.getResponseBody());
         return httpResponseDTO;
     }
 

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SensorDTO {
     private String sensorContractAddress;
+    private String jwt;
     private String dataStreamEntityContractAddress;
     private SensorType sensorType;
     private Double latitude;

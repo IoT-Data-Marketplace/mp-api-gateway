@@ -24,7 +24,7 @@ public class MessageService {
     ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
-    public HttpResponseDTO sendMessages(String sensorContractAddress, NewMessagesDTO messagesDTO, Headers tracingHeaders) {
+    public HttpResponseDTO publishMessages(String sensorContractAddress, NewMessagesDTO messagesDTO, Headers tracingHeaders) {
 
         OkHttpClient client = new OkHttpClient();
 
@@ -40,8 +40,6 @@ public class MessageService {
 
         Response response = client.newCall(request).execute();
         HttpResponseDTO httpResponseDTO = HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
-        log.info("Response Code: " + httpResponseDTO.getStatusCode());
-        log.info("Response Body: " + httpResponseDTO.getResponseBody());
         return httpResponseDTO;
     }
 

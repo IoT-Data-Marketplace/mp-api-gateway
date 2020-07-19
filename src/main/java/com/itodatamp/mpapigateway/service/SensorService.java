@@ -1,12 +1,9 @@
 package com.itodatamp.mpapigateway.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itodatamp.mpapigateway.dto.HttpResponseDTO;
-import com.itodatamp.mpapigateway.dto.SensorDTO;
-import com.itodatamp.mpapigateway.dto.SensorStatus;
-import com.itodatamp.mpapigateway.dto.SensorSummaryDTO;
+import com.itodatamp.mpapigateway.dto.*;
+import com.itodatamp.mpapigateway.security.JWTTokenService;
 import com.itodatamp.mpapigateway.service.bc.BCSensorService;
-import com.itodatamp.mpapigateway.service.entity.SensorEntityService;
 import com.itodatamp.mpapigateway.service.kafka.TopicService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -17,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -26,7 +24,9 @@ public class SensorService {
 
     private final TopicService topicService;
     private final BCSensorService bcSensorService;
-    private final SensorEntityService sensorEntityService;
+    private final JWTTokenService jwtTokenService;
+    private final AuthEntityManagerService authEntityManagerService;
+    ObjectMapper mapper = new ObjectMapper();
 
     public List<SensorDTO> getAllSensors(int count, Headers tracingHeaders) {
         return null;
@@ -52,11 +52,25 @@ public class SensorService {
         HttpResponseDTO bcSensorStatusResponseDTO = bcSensorService.setSensorStatus(sensorDTO, tracingHeaders);
         if (HttpStatus.valueOf(bcSensorStatusResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(bcSensorStatusResponseDTO.getResponseBody());
 
-//         finally we store the sensor data in our database to improve the search speed
-        HttpResponseDTO sensorEntityHttpResponseDTO = sensorEntityService.saveSensor(sensorDTO, tracingHeaders);
-        if (HttpStatus.valueOf(sensorEntityHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(sensorEntityHttpResponseDTO.getResponseBody());
 
-        return HttpResponseDTO.builder().statusCode(sensorEntityHttpResponseDTO.getStatusCode()).responseBody(sensorEntityHttpResponseDTO.getResponseBody()).build();
+        // if everything ok so far, create a sensor JWT token used to authenticate when publishing the data
+        String sensorJWTToken = jwtTokenService.permanent(
+                Map.of("sensorContractAddress", sensorContractAddress)
+        );
+
+//         finally we store the sensor data in our database to improve the search speed
+        AuthDTO authDTO = AuthDTO.builder()
+                .contractAddress(sensorContractAddress)
+                .jwt(sensorJWTToken)
+                .build();
+         HttpResponseDTO saveSensorJWTHttpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO);
+
+        if (HttpStatus.valueOf(saveSensorJWTHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(saveSensorJWTHttpResponseDTO.getResponseBody());
+
+        return HttpResponseDTO.builder()
+                .statusCode(HttpStatus.OK.value())
+                .responseBody(mapper.writeValueAsString(authDTO))
+                .build();
     }
 
     @SneakyThrows
@@ -64,7 +78,7 @@ public class SensorService {
 
 //         if the contract is ok, we create a topic on kafka cluster so the sensor can start pushing the data
         HttpResponseDTO topicHttpResponseDTO = topicService.getTopicSummary(sensorContractAddress, tracingHeaders);
-//        if (HttpStatus.valueOf(topicHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(topicHttpResponseDTO.getResponseBody());
+//        if (HttpStatus.valueOf(topicHttpStatus.valueOf(httpResponseDTO.getStatusCode())) != HttpStatus.OK) throw new Exception(topicHttpResponseDTO.getResponseBody());
 
         JSONObject jsonObject = new JSONObject(topicHttpResponseDTO.getResponseBody());
 
@@ -72,7 +86,6 @@ public class SensorService {
                 .sensorContractAddress(sensorContractAddress)
                 .streamSize(jsonObject.getInt("topicSize"))
                 .build();
-
 
         return sensorSummaryDTO;
     }

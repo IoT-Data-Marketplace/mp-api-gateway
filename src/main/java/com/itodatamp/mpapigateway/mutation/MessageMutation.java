@@ -18,7 +18,7 @@ public class MessageMutation implements GraphQLMutationResolver {
     private final TracingHeaderInterceptorHelper tracingHeaderInterceptorHelper;
 
     public HttpResponseDTO sendMessages(@NotNull final String sensorContractAddress, @NotNull NewMessagesDTO newMessagesDTO, DataFetchingEnvironment env) {
-        return messageService.sendMessages(sensorContractAddress, newMessagesDTO, tracingHeaderInterceptorHelper.getTracingHeaders(env));
+        return messageService.publishMessages(sensorContractAddress, newMessagesDTO, tracingHeaderInterceptorHelper.getTracingHeaders(env));
     }
 
 }
