@@ -43,7 +43,7 @@ public class DSPService {
                 .get()
                 .build();
 
-        log.info("Submitting GET request: ".concat(url.toString()));
+        log.debug("Submitting GET request: ".concat(url.toString()));
         Response response = null;
         try {
             response = client.newCall(request).execute();

@@ -58,10 +58,10 @@ public class SensorService {
                 Map.of("sensorContractAddress", sensorContractAddress)
         );
 
-//         finally we store the sensor data in our database to improve the search speed
+//         store the token for later authentication
         AuthDTO authDTO = AuthDTO.builder()
                 .contractAddress(sensorContractAddress)
-                .jwt(sensorJWTToken)
+//                .jwt(sensorJWTToken)
                 .build();
          HttpResponseDTO saveSensorJWTHttpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO);
 
@@ -82,12 +82,11 @@ public class SensorService {
 
         JSONObject jsonObject = new JSONObject(topicHttpResponseDTO.getResponseBody());
 
-        SensorSummaryDTO sensorSummaryDTO = SensorSummaryDTO.builder()
+        return SensorSummaryDTO.builder()
                 .sensorContractAddress(sensorContractAddress)
                 .streamSize(jsonObject.getInt("topicSize"))
+                .jwt(authEntityManagerService.getJWTForEntity(sensorContractAddress))
                 .build();
-
-        return sensorSummaryDTO;
     }
 
 }

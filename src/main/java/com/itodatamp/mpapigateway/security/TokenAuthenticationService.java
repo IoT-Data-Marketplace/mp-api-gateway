@@ -56,7 +56,7 @@ final class TokenAuthenticationService implements DSAuthenticationService {
 
         OkHttpClient client = new OkHttpClient();
         URL url = new URL(properties.getEntityManagerURL()
-                .concat("/auth/jwt")
+                .concat("/auth/jwt/exists")
                 .concat("?jwt=")
                 .concat(token));
 
@@ -66,7 +66,7 @@ final class TokenAuthenticationService implements DSAuthenticationService {
                 .get()
                 .build();
 
-        log.info("Submitting GET request: ".concat(url.toString()));
+        log.debug("Submitting GET request: ".concat(url.toString()));
         Response response = null;
         try {
             response = client.newCall(request).execute();

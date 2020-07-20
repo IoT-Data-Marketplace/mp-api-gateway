@@ -37,4 +37,20 @@ public class AuthEntityManagerService {
                 .responseBody(response.body().string())
                 .build();
     }
+
+    @SneakyThrows
+    public String getJWTForEntity(String entityContractAddress) {
+        Request request = new Request.Builder()
+                .url(new URL(properties.getEntityManagerURL()
+                        .concat("/auth/jwt")
+                        .concat("?entityContractAddress=")
+                        .concat(entityContractAddress)
+                ))
+                .get()
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
 }

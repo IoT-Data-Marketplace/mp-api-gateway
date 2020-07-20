@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class SensorSummaryDTO {
     private String sensorContractAddress;
     private int streamSize;
+    private String jwt;
 }
