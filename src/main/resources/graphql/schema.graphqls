@@ -59,6 +59,16 @@ input NewMessagesDTO {
 }
 
 type Mutation {
+    getAuthNonce(
+        dspAccountAddress: String!
+        dspContractAddress: String!
+    ):HttpResponseDTO
+    verifyAuthChallenge(
+        signature: String!
+        nonce: String!
+        dspAccountAddress: String!
+        dspContractAddress: String!
+    ):HttpResponseDTO
     registerSensor(
         sensorContractAddress: String!
     ):HttpResponseDTO

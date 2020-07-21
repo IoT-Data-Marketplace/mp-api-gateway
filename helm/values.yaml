@@ -25,7 +25,7 @@ global:
   mpSignatureVerifierPort: 8030
 
 service:
-  type: NodePort
+  type: ClusterIP
 
 hpa:
   enabled: true

@@ -12,7 +12,9 @@ import java.util.Map;
 
 @Log
 @Component
-public class TracingHeaderInterceptorHelper {
+public class HeaderInterceptorHelper {
+
+    private static final String BEARER = "Bearer";
 
 //    https://istio.io/latest/docs/tasks/observability/distributed-tracing/overview/#trace-context-propagation
     public Headers getTracingHeaders(DataFetchingEnvironment env) {
@@ -38,5 +40,18 @@ public class TracingHeaderInterceptorHelper {
         }
         return Headers.of(headersMap);
     }
+
+//    public String getAuthHeader(DataFetchingEnvironment env) {
+//        GraphQLContext context =  env.getContext();
+//        HttpServletRequest request = context.getHttpServletRequest().get();
+//
+//        final String param = ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION)).get();
+//
+//        return ofNullable(param)
+//                .map(value -> removeStart(value, BEARER))
+//                .map(String::trim)
+//                .orElseThrow(() -> new BadCredentialsException("Missing Authentication Token"));
+//
+//    }
 
 }

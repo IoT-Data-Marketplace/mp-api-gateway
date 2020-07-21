@@ -23,13 +23,14 @@ public class AuthEntityManagerService {
     OkHttpClient client = new OkHttpClient();
 
     @SneakyThrows
-    public HttpResponseDTO saveAuthDTO(AuthDTO authDTO) {
+    public HttpResponseDTO saveAuthDTO(AuthDTO authDTO, Headers tracingHeaders) {
         URL url = new URL(properties.getEntityManagerURL().concat("/auth"));
         RequestBody dspBody = RequestBody.create(mediaType, mapper.writeValueAsString(authDTO));
         Request dspRequest = new Request.Builder()
                 .url(url)
                 .post(dspBody)
                 .addHeader("Content-Type", "application/json")
+                .headers(tracingHeaders)
                 .build();
         Response response = client.newCall(dspRequest).execute();
         return HttpResponseDTO.builder()
@@ -39,7 +40,7 @@ public class AuthEntityManagerService {
     }
 
     @SneakyThrows
-    public String getJWTForEntity(String entityContractAddress) {
+    public String getJWTForEntity(String entityContractAddress, Headers tracingHeaders) {
         Request request = new Request.Builder()
                 .url(new URL(properties.getEntityManagerURL()
                         .concat("/auth/jwt")
@@ -47,6 +48,7 @@ public class AuthEntityManagerService {
                         .concat(entityContractAddress)
                 ))
                 .get()
+                .headers(tracingHeaders)
                 .build();
 
         Response response = client.newCall(request).execute();

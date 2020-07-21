@@ -1,7 +1,7 @@
 package com.itodatamp.mpapigateway.query;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.itodatamp.mpapigateway.config.TracingHeaderInterceptorHelper;
+import com.itodatamp.mpapigateway.config.HeaderInterceptorHelper;
 import com.itodatamp.mpapigateway.dto.SensorDTO;
 import com.itodatamp.mpapigateway.dto.SensorSummaryDTO;
 import com.itodatamp.mpapigateway.service.SensorService;
@@ -15,24 +15,24 @@ import java.util.Optional;
 public class SensorQuery implements GraphQLQueryResolver {
 
     private final SensorService sensorService;
-    private final TracingHeaderInterceptorHelper tracingHeaderInterceptorHelper;
+    private final HeaderInterceptorHelper headerInterceptorHelper;
 
-    public SensorQuery(SensorService sensorService, TracingHeaderInterceptorHelper tracingHeaderInterceptorHelper) {
+    public SensorQuery(SensorService sensorService, HeaderInterceptorHelper headerInterceptorHelper) {
         this.sensorService = sensorService;
-        this.tracingHeaderInterceptorHelper = tracingHeaderInterceptorHelper;
+        this.headerInterceptorHelper = headerInterceptorHelper;
     }
 
 
     public List<SensorDTO> getAllSensors(final int count, DataFetchingEnvironment env) {
-        return this.sensorService.getAllSensors(count, tracingHeaderInterceptorHelper.getTracingHeaders(env));
+        return this.sensorService.getAllSensors(count, headerInterceptorHelper.getTracingHeaders(env));
     }
 
     public Optional<SensorDTO> getSensorByContractAddress(final String sensorContractAddress, DataFetchingEnvironment env) {
-        return this.sensorService.getSensorByContractAddress(sensorContractAddress, tracingHeaderInterceptorHelper.getTracingHeaders(env));
+        return this.sensorService.getSensorByContractAddress(sensorContractAddress, headerInterceptorHelper.getTracingHeaders(env));
     }
 
     public SensorSummaryDTO getSensorSummary(final String sensorContractAddress, DataFetchingEnvironment env) {
-        return this.sensorService.getSensorSummary(sensorContractAddress, tracingHeaderInterceptorHelper.getTracingHeaders(env));
+        return this.sensorService.getSensorSummary(sensorContractAddress, headerInterceptorHelper.getTracingHeaders(env));
     }
 
 }

@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class DSPService {
     private final AuthEntityManagerService authEntityManagerService;
 
     @SneakyThrows
-    public ResponseEntity<String> getChallenge(String dspAccountAddress, String dspContractAddress) {
+    public HttpResponseDTO getAuthNonce(String dspAccountAddress, String dspContractAddress, Headers tracingHeaders) {
         OkHttpClient client = new OkHttpClient();
         URL url = new URL(properties.getBcClientURL()
                 .concat("/dsp")
@@ -38,7 +37,7 @@ public class DSPService {
                 .concat(dspAccountAddress));
 
         Request request = new Request.Builder()
-//                .headers(tracingHeaders)
+                .headers(tracingHeaders)
                 .url(url)
                 .get()
                 .build();
@@ -52,29 +51,32 @@ public class DSPService {
         }
 
         if (!Boolean.parseBoolean(response.body().string()))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return HttpResponseDTO.builder()
+                    .responseBody("Smart Contract not found")
+                    .statusCode(HttpStatus.FORBIDDEN.value())
+                    .build();
 
         UUID nonce = UUID.randomUUID();
 
         HttpResponseDTO httpResponseDTO = authEntityManagerService.saveAuthDTO(AuthDTO.builder()
                 .contractAddress(dspContractAddress)
                 .nonce(nonce.toString())
-                .build());
+                .build(), tracingHeaders);
 
-        if (HttpStatus.valueOf(httpResponseDTO.getStatusCode()) == HttpStatus.OK)
-            return ResponseEntity.ok(nonce.toString());
+        if (HttpStatus.valueOf(httpResponseDTO.getStatusCode()) != HttpStatus.OK)
+            return HttpResponseDTO.builder()
+                    .responseBody("Something went wrong while generating and saving the nonce")
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .build();
 
-        return ResponseEntity.status(HttpStatus.valueOf(httpResponseDTO.getStatusCode())).build();
+        return HttpResponseDTO.builder()
+                .responseBody(nonce.toString())
+                .statusCode(HttpStatus.OK.value())
+                .build();
     }
 
     @SneakyThrows
-    public ResponseEntity<String> verifyChallenge(Map<String, Object> payload) {
-        /* extract body params */
-        String signature = payload.get("signature").toString();
-        String nonce = payload.get("nonce").toString();
-        String dspAccountAddress = payload.get("dspAccountAddress").toString();
-        String dspContractAddress = payload.get("dspContractAddress").toString();
-
+    public HttpResponseDTO verifyChallenge(String signature, String nonce, String dspAccountAddress, String dspContractAddress, Headers tracingHeaders) {
         /* validate that the dsp really has signed the nonce */
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -91,6 +93,7 @@ public class DSPService {
                 .url(properties.getSignatureVerifierURL().concat("/api/verify"))
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
+                .headers(tracingHeaders)
                 .build();
         Response response = client.newCall(request).execute();
 
@@ -108,12 +111,18 @@ public class DSPService {
                     .jwt(jwtToken)
                     .build();
 
-            HttpResponseDTO httpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO);
+            HttpResponseDTO httpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO, tracingHeaders);
 
             if (HttpStatus.valueOf(httpResponseDTO.getStatusCode()) == HttpStatus.OK)
-                return ResponseEntity.ok(jwtToken);
+                return HttpResponseDTO.builder()
+                        .responseBody(jwtToken)
+                        .statusCode(HttpStatus.OK.value())
+                        .build();
         }
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        return HttpResponseDTO.builder()
+                .responseBody("Challenge not correct")
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .build();
     }
 }

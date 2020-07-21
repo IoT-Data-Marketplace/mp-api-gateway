@@ -7,8 +7,8 @@ import java.util.Optional;
 public interface DSAuthenticationService {
 
     Optional<String> login(final String username, final String password);
-
-    Optional<User> findByToken(final String token);
+//
+//    Optional<User> findByToken(final String token);
 
     void logout(final String token);
 

@@ -63,7 +63,7 @@ public class SensorService {
                 .contractAddress(sensorContractAddress)
 //                .jwt(sensorJWTToken)
                 .build();
-         HttpResponseDTO saveSensorJWTHttpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO);
+         HttpResponseDTO saveSensorJWTHttpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO, tracingHeaders);
 
         if (HttpStatus.valueOf(saveSensorJWTHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(saveSensorJWTHttpResponseDTO.getResponseBody());
 
@@ -85,7 +85,7 @@ public class SensorService {
         return SensorSummaryDTO.builder()
                 .sensorContractAddress(sensorContractAddress)
                 .streamSize(jsonObject.getInt("topicSize"))
-                .jwt(authEntityManagerService.getJWTForEntity(sensorContractAddress))
+                .jwt(authEntityManagerService.getJWTForEntity(sensorContractAddress, tracingHeaders))
                 .build();
     }
 

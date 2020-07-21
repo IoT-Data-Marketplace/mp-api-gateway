@@ -9,7 +9,9 @@ spec:
   ports:
     - port: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort }}
       targetPort: {{ required "A valid .Values.global.mpApiGatewayPort entry required!" .Values.global.mpApiGatewayPort }}
-      nodePort: {{ required "A valid .Values.global.mpApiGatewayNodePort entry required!" .Values.global.mpApiGatewayNodePort }}
+{{ if (and (eq .Values.service.type "NodePort") (not (empty .Values.global.mpApiGatewayNodePort))) }}
+      nodePort: {{ .Values.global.mpApiGatewayNodePort }}
+{{ end }}
       protocol: TCP
       name: {{ required "A valid .Values.global.mpApiGatewayPortName entry required!" .Values.global.mpApiGatewayPortName }}
   selector:
