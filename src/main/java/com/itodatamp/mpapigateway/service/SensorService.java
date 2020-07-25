@@ -61,7 +61,7 @@ public class SensorService {
 //         store the token for later authentication
         AuthDTO authDTO = AuthDTO.builder()
                 .contractAddress(sensorContractAddress)
-//                .jwt(sensorJWTToken)
+                .jwt(sensorJWTToken)
                 .build();
          HttpResponseDTO saveSensorJWTHttpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO, tracingHeaders);
 

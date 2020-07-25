@@ -11,6 +11,7 @@ import lombok.extern.java.Log;
 import okhttp3.*;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -20,14 +21,16 @@ import java.util.LinkedList;
 @Log
 public class MessageService {
 
+    private final AuthEntityManagerService authEntityManagerService;
     private final PropertiesBean properties;
     ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
-    public HttpResponseDTO publishMessages(String sensorContractAddress, NewMessagesDTO messagesDTO, Headers tracingHeaders) {
+    public HttpResponseDTO publishMessages(String sensorContractAddress, String jwt, NewMessagesDTO messagesDTO, Headers tracingHeaders) {
+        if (!authEntityManagerService.isJWTValid(sensorContractAddress, jwt, tracingHeaders))
+            return HttpResponseDTO.builder().statusCode(HttpStatus.UNAUTHORIZED.value()).responseBody("JWT Token not valid").build();
 
         OkHttpClient client = new OkHttpClient();
-
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, mapper.writeValueAsString(messagesDTO));
         Request request = new Request.Builder()
@@ -37,10 +40,8 @@ public class MessageService {
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
                 .build();
-
         Response response = client.newCall(request).execute();
-        HttpResponseDTO httpResponseDTO = HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
-        return httpResponseDTO;
+        return HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
     }
 
     @SneakyThrows

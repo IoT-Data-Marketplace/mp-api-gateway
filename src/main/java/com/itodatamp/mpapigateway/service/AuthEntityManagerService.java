@@ -11,6 +11,7 @@ import okhttp3.*;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -53,6 +54,24 @@ public class AuthEntityManagerService {
 
         Response response = client.newCall(request).execute();
         return response.body().string();
+    }
+
+    @SneakyThrows
+    public boolean isJWTValid(String entityContractAddress, String jwt, Headers tracingHeaders) {
+        Request request = new Request.Builder()
+                .url(new URL(properties.getEntityManagerURL()
+                        .concat("/auth/valid")
+                        .concat("?entityContractAddress=")
+                        .concat(entityContractAddress)
+                        .concat("&jwt=")
+                        .concat(jwt)
+                ))
+                .get()
+                .headers(tracingHeaders)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return Boolean.parseBoolean(Objects.requireNonNull(response.body()).string());
     }
 
 }

@@ -1,14 +1,19 @@
 package com.itodatamp.mpapigateway.config;
 
+import com.itodatamp.mpapigateway.exception.DSAuthException;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.servlet.GraphQLContext;
 import lombok.extern.java.Log;
 import okhttp3.Headers;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.removeStart;
 
 @Log
 @Component
@@ -41,17 +46,17 @@ public class HeaderInterceptorHelper {
         return Headers.of(headersMap);
     }
 
-//    public String getAuthHeader(DataFetchingEnvironment env) {
-//        GraphQLContext context =  env.getContext();
-//        HttpServletRequest request = context.getHttpServletRequest().get();
-//
-//        final String param = ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION)).get();
-//
-//        return ofNullable(param)
-//                .map(value -> removeStart(value, BEARER))
-//                .map(String::trim)
-//                .orElseThrow(() -> new BadCredentialsException("Missing Authentication Token"));
-//
-//    }
+    public String getJWTFromHeader(DataFetchingEnvironment env) {
+        GraphQLContext context =  env.getContext();
+        HttpServletRequest request = context.getHttpServletRequest().get();
+
+        final String param = ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION)).get();
+
+        return ofNullable(param)
+                .map(value -> removeStart(value, BEARER))
+                .map(String::trim)
+                .orElseThrow(() -> new DSAuthException("Missing Authentication Token"));
+
+    }
 
 }
