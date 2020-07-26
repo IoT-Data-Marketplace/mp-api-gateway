@@ -17,6 +17,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.itodatamp.mpapigateway.constants.Contants.AUTH_DSE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class DSPService {
 
     private final PropertiesBean properties;
     private final JWTTokenService jwtTokenService;
-    private final AuthEntityManagerService authEntityManagerService;
+    private final AuthService authService;
 
     @SneakyThrows
     public HttpResponseDTO getAuthNonce(String dspAccountAddress, String dspContractAddress, Headers tracingHeaders) {
@@ -58,10 +60,10 @@ public class DSPService {
 
         UUID nonce = UUID.randomUUID();
 
-        HttpResponseDTO httpResponseDTO = authEntityManagerService.saveAuthDTO(AuthDTO.builder()
+        HttpResponseDTO httpResponseDTO = authService.saveAuthDTO(AuthDTO.builder()
                 .contractAddress(dspContractAddress)
                 .nonce(nonce.toString())
-                .build(), tracingHeaders);
+                .build(), AUTH_DSE, tracingHeaders);
 
         if (HttpStatus.valueOf(httpResponseDTO.getStatusCode()) != HttpStatus.OK)
             return HttpResponseDTO.builder()
@@ -111,7 +113,7 @@ public class DSPService {
                     .jwt(jwtToken)
                     .build();
 
-            HttpResponseDTO httpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO, tracingHeaders);
+            HttpResponseDTO httpResponseDTO = authService.saveAuthDTO(authDTO, AUTH_DSE, tracingHeaders);
 
             if (HttpStatus.valueOf(httpResponseDTO.getStatusCode()) == HttpStatus.OK)
                 return HttpResponseDTO.builder()

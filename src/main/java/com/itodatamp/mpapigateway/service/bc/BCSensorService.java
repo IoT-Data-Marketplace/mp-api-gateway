@@ -80,4 +80,31 @@ public class BCSensorService {
 
         return HttpResponseDTO.builder().statusCode(response.code()).responseBody(response.body().string()).build();
     }
+
+    @SneakyThrows
+    public boolean isGivenEntitySensorOwner(String entityContractAddress, String sensorContractAddress, Headers tracingHeaders) {
+        OkHttpClient client = new OkHttpClient();
+        URL url = new URL(properties.getBcClientURL()
+                .concat("/sensors/owner")
+                .concat("?sensorContractAddress=")
+                .concat(sensorContractAddress)
+                .concat("&entityContractAddress=")
+                .concat(entityContractAddress));
+
+        Request request = new Request.Builder()
+                .headers(tracingHeaders)
+                .url(url)
+                .get()
+                .build();
+
+        log.debug("Submitting GET request: ".concat(url.toString()));
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.debug("Entity: ".concat(entityContractAddress).concat(" unauthorized to stream from sensor: ".concat(sensorContractAddress)));
+        return Boolean.parseBoolean(response.body().string());
+    }
 }

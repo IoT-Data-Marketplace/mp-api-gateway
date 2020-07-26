@@ -15,8 +15,8 @@ public class MessageQuery implements GraphQLQueryResolver {
     private final MessageService messageService;
     private final HeaderInterceptorHelper headerInterceptorHelper;
 
-    public ResponseMessagesDTO getMessagesForSensor(final String sensorContractAddress, final int offset, final int count, DataFetchingEnvironment env) {
-        return messageService.getMessagesForSensor(sensorContractAddress, offset, count, headerInterceptorHelper.getTracingHeaders(env));
+    public ResponseMessagesDTO getMessagesForSensor(final String entityContractAddress, final String sensorContractAddress, final int offset, final int count, DataFetchingEnvironment env) {
+        return messageService.getMessagesForSensor(entityContractAddress, sensorContractAddress, headerInterceptorHelper.getJWTFromHeader(env), offset, count, headerInterceptorHelper.getTracingHeaders(env));
     }
 
 }

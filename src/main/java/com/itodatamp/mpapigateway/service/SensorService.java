@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.itodatamp.mpapigateway.constants.Contants.AUTH_SENSOR_PUBLISHING;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class SensorService {
     private final TopicService topicService;
     private final BCSensorService bcSensorService;
     private final JWTTokenService jwtTokenService;
-    private final AuthEntityManagerService authEntityManagerService;
+    private final AuthService authService;
     ObjectMapper mapper = new ObjectMapper();
 
     public List<SensorDTO> getAllSensors(int count, Headers tracingHeaders) {
@@ -63,7 +65,7 @@ public class SensorService {
                 .contractAddress(sensorContractAddress)
                 .jwt(sensorJWTToken)
                 .build();
-         HttpResponseDTO saveSensorJWTHttpResponseDTO = authEntityManagerService.saveAuthDTO(authDTO, tracingHeaders);
+         HttpResponseDTO saveSensorJWTHttpResponseDTO = authService.saveAuthDTO(authDTO, AUTH_SENSOR_PUBLISHING, tracingHeaders);
 
         if (HttpStatus.valueOf(saveSensorJWTHttpResponseDTO.getStatusCode()) != HttpStatus.OK) throw new Exception(saveSensorJWTHttpResponseDTO.getResponseBody());
 
@@ -85,7 +87,7 @@ public class SensorService {
         return SensorSummaryDTO.builder()
                 .sensorContractAddress(sensorContractAddress)
                 .streamSize(jsonObject.getInt("topicSize"))
-                .jwt(authEntityManagerService.getJWTForEntity(sensorContractAddress, tracingHeaders))
+                .jwt(authService.getJWTForEntity(sensorContractAddress, AUTH_SENSOR_PUBLISHING, tracingHeaders))
                 .build();
     }
 

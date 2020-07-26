@@ -38,6 +38,7 @@ type ResponseRecord {
 }
 
 type ResponseMessagesDTO {
+    statusCode: Int!
     records: [ResponseRecord]
 }
 
@@ -45,7 +46,7 @@ type Query {
     getAllSensors(count: Int): [Sensor]!
     getSensorByContractAddress(sensorAccountContractAddress: ID): Sensor
     getSensorSummary(sensorContractAddress: String!): SensorSummaryDTO
-    getMessagesForSensor(sensorContractAddress: String!, offset: Int!, count: Int!):ResponseMessagesDTO
+    getMessagesForSensor(entityContractAddress: String!, sensorContractAddress: String!, offset: Int!, count: Int!):ResponseMessagesDTO
 }
 
 

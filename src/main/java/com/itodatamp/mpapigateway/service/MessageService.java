@@ -16,18 +16,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 
+import static com.itodatamp.mpapigateway.constants.Contants.AUTH_SENSOR_PUBLISHING;
+
 @Service
 @RequiredArgsConstructor
 @Log
 public class MessageService {
 
-    private final AuthEntityManagerService authEntityManagerService;
+    private final AuthService authService;
     private final PropertiesBean properties;
     ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
     public HttpResponseDTO publishMessages(String sensorContractAddress, String jwt, NewMessagesDTO messagesDTO, Headers tracingHeaders) {
-        if (!authEntityManagerService.isJWTValid(sensorContractAddress, jwt, tracingHeaders))
+        if (!authService.isJWTValid(sensorContractAddress, AUTH_SENSOR_PUBLISHING, jwt, tracingHeaders))
             return HttpResponseDTO.builder().statusCode(HttpStatus.UNAUTHORIZED.value()).responseBody("JWT Token not valid").build();
 
         OkHttpClient client = new OkHttpClient();
@@ -45,8 +47,12 @@ public class MessageService {
     }
 
     @SneakyThrows
-    public ResponseMessagesDTO getMessagesForSensor(String sensorContractAddress, Integer offset, Integer count, Headers tracingHeaders) {
-        ResponseMessagesDTO responseMessagesDTO = ResponseMessagesDTO.builder().records(new LinkedList<>()).build();
+    public ResponseMessagesDTO getMessagesForSensor(String entityContractAddress, String sensorContractAddress, String jwt, Integer offset, Integer count, Headers tracingHeaders) {
+        if (!authService.canStreamMessages(entityContractAddress, sensorContractAddress, jwt, tracingHeaders))
+            return ResponseMessagesDTO.builder().statusCode(HttpStatus.UNAUTHORIZED.value()).records(new LinkedList<>()).build();
+
+
+        ResponseMessagesDTO responseMessagesDTO = ResponseMessagesDTO.builder().statusCode(HttpStatus.OK.value()).records(new LinkedList<>()).build();
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();

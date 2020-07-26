@@ -13,6 +13,8 @@ import java.util.List;
 @Builder
 public class ResponseMessagesDTO {
 
+    private int statusCode;
+
     private List<ResponseMessagesDTO.Record> records;
 
     @Getter
