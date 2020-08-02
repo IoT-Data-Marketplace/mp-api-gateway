@@ -34,13 +34,13 @@ hpa:
   targetAverageCPUUtilization: 70
   targetAverageMemoryUtilization: 70
 
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 1000m
-    memory: 1024Mi
+resources: {}
+#  requests:
+#    cpu: 100m
+#    memory: 128Mi
+#  limits:
+#    cpu: 1000m
+#    memory: 1024Mi
 
 livenessProbe:
   path: /actuator/health

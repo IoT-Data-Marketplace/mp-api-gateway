@@ -53,7 +53,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 
 {{- define "mpKafkaRestProxyUrl" }}
-{{- printf "http://%s-mp-kafka-rest-proxy:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpKafkaRestProxyPort | toString) | quote}}
+{{- printf "http://%s-mp-stream-api:%s" ( required "A valid .Values.global.namespaceName entry required!" .Values.global.namespaceName) (.Values.global.mpKafkaRestProxyPort | toString) | quote}}
 {{- end }}
 
 {{- define "bcClientURL" }}
